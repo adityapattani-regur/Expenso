@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Expenso</string>
+    <string name="type">Type</string>
+    <string name="description">Description</string>
+    <string name="type_image">Type image</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="image_of_expense">Image of expense</string>
+    <string name="amount">Amount</string>
+    <string name="no_expenses_entered">No expenses entered</string>
+    <string name="home">Home</string>
+    <string name="scan">Scan</string>
+    <string name="predict">Predict</string>
+    <string name="scan_history">Scan History</string>
+    <string name="logout">Logout</string>
+    <string name="rupee">₹</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+</resources>

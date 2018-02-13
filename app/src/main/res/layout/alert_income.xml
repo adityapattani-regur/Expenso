@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/amount_alert"
+        android:layout_alignBottom="@+id/amount_alert"
+        android:layout_alignStart="@+id/amount_alert"
+        android:layout_marginStart="12dp"
+        android:text="@string/rupee"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/amount_alert"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:hint="@string/amount"
+        android:textStyle="bold"
+        android:inputType="number"
+        android:paddingStart="40dp"
+        android:paddingEnd="8dp"/>
+
+    <Button
+        android:id="@+id/alert_income_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/amount_alert"
+        android:layout_below="@+id/amount_alert"
+        android:layout_marginTop="24dp"
+        android:background="@android:color/transparent"
+        android:text="@string/add"
+        android:textColor="@color/colorAccent"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/alert_income_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/alert_income_add"
+        android:layout_toStartOf="@+id/alert_income_add"
+        android:textColor="@color/colorAccent"
+        android:background="@android:color/transparent"
+        android:text="@string/cancel" />
+
+</RelativeLayout>

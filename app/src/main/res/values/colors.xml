@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#66BB6A</color>
+    <color name="colorPrimaryDark">#43A047</color>
+    <color name="colorAccent">#2196F3</color>
+    <color name="colorAccentDark">#3F51B5</color>
+    <color name="foodItem">#FFEE58</color>
+    <color name="shoppingItem">#FF7043</color>
+    <color name="debtItem">#66BB6A</color>
+    <color name="transportItem">#42A5F5</color>
+</resources>
