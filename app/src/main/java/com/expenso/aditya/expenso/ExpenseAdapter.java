@@ -56,19 +56,19 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
         switch (type){
             case "Food":
                 Glide.with(context).load(R.drawable.ic_food).into(holder.expenseImage);
-                holder.expenseType.setTextColor(Color.parseColor("#FDD835"));
+                holder.expenseType.setTextColor(Color.parseColor("#FFDA44"));
                 break;
             case "Shopping":
                 Glide.with(context).load(R.drawable.ic_shopping).into(holder.expenseImage);
-                holder.expenseType.setTextColor(Color.parseColor("#ef5350"));
+                holder.expenseType.setTextColor(Color.parseColor("#E64C3C"));
                 break;
             case "Transport":
                 Glide.with(context).load(R.drawable.ic_transport).into(holder.expenseImage);
-                holder.expenseType.setTextColor(Color.parseColor("#2196F3"));
+                holder.expenseType.setTextColor(Color.parseColor("#87D7FF"));
                 break;
             case "Debt":
                 Glide.with(context).load(R.drawable.ic_debt).into(holder.expenseImage);
-                holder.expenseType.setTextColor(Color.parseColor("#4CAF50"));
+                holder.expenseType.setTextColor(Color.parseColor("#EAEAD7"));
                 break;
         }
 

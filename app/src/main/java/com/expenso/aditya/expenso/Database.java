@@ -1,5 +1,6 @@
 package com.expenso.aditya.expenso;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,7 +8,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Database extends SQLiteOpenHelper{
@@ -72,7 +78,7 @@ public class Database extends SQLiteOpenHelper{
         SQLiteDatabase db = getReadableDatabase();
         List<Expense> expenses = new ArrayList<>();
 
-        String SELECT_ALL = "SELECT * FROM " + TABLE_EXPENSES + " WHERE date LIKE '%/" + month + "/" + year + "' ORDER BY date DESC;";
+        String SELECT_ALL = "SELECT * FROM " + TABLE_EXPENSES + " WHERE date LIKE '%-" + month + "-" + year + "' ORDER BY id DESC;";
         Cursor selectCursor = db.rawQuery(SELECT_ALL, null);
 
         if (selectCursor.moveToFirst()) {
@@ -83,5 +89,71 @@ public class Database extends SQLiteOpenHelper{
 
         selectCursor.close();
         return expenses;
+    }
+
+    JSONObject getGraphData(String month, String year) {
+        SQLiteDatabase db = getReadableDatabase();
+        JSONObject result = new JSONObject();
+        String SELECT_MAX_DATE = "SELECT MAX(date) FROM " + TABLE_EXPENSES + " WHERE date LIKE '%-" + month + "-" + year + "';";
+        String SELECT_MIN_DATE = "SELECT MIN(date) FROM " + TABLE_EXPENSES + " WHERE date LIKE '%-" + month + "-" + year + "';";
+        String SELECT_MAX_EXPENSE = "SELECT MAX(amount) FROM " + TABLE_EXPENSES + " WHERE date LIKE '%-" + month + "-" + year + "';";
+        String SELECT_TOTAL_INCOME = "SELECT SUM(amount) FROM " + TABLE_INCOMES + " WHERE date LIKE '%-" + month + "-" + year + "';";
+
+        Cursor values = null;
+        try {
+            values = db.rawQuery(SELECT_MAX_DATE, null);
+            values.moveToFirst();
+            result.put("lastDate", values.getString(0));
+
+            values = db.rawQuery(SELECT_MIN_DATE, null);
+            values.moveToFirst();
+            result.put("firstDate", values.getString(0));
+
+            values = db.rawQuery(SELECT_MAX_EXPENSE, null);
+            values.moveToFirst();
+            result.put("maxExpense", values.getString(0));
+
+            values = db.rawQuery(SELECT_TOTAL_INCOME, null);
+            values.moveToFirst();
+            result.put("totalIncome", values.getString(0));
+        } catch (JSONException e) {
+            Log.e("JSON ERROR", e.toString());
+        }
+
+        Log.e("Result", result.toString());
+        values.close();
+        return result;
+    }
+
+    float getExpensesForDate(int date, String month, String year) {
+        String day;
+        if(date < 10) {
+            day = "0" + date + "-" + month + "-" + year;
+        }
+        else {
+            day = date + "-" + month + "-" + year;
+        }
+        SQLiteDatabase db = getReadableDatabase();
+        String SELECT_EXPENSE = "SELECT SUM(amount) FROM " + TABLE_EXPENSES + " WHERE date = '" + day + "';";
+        Cursor expense = db.rawQuery(SELECT_EXPENSE, null);
+        expense.moveToFirst();
+        float result = expense.getFloat(0);
+        expense.close();
+        return result;
+    }
+
+    float getExpenseForCategory(String value) {
+        float result;
+        Calendar calendar = Calendar.getInstance();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+        String monthYear = dateFormat.format(calendar.getTime());
+
+        SQLiteDatabase db = getReadableDatabase();
+        String SELECT_QUERY = "SELECT SUM(amount) FROM " + TABLE_EXPENSES + " WHERE type = '" + value + "' AND date LIKE '%-" + monthYear + "';";
+        Cursor cursor = db.rawQuery(SELECT_QUERY, null);
+        cursor.moveToFirst();
+        result = cursor.getFloat(0);
+        cursor.close();
+        return result;
     }
 }

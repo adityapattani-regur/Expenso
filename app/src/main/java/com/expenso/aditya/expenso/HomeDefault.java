@@ -3,13 +3,13 @@ package com.expenso.aditya.expenso;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +23,15 @@ import android.widget.TextView;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,10 +70,11 @@ public class HomeDefault extends Fragment {
         expensesRecycler.setLayoutManager(mLayoutManager);
         expensesRecycler.setFocusable(false);
 
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat monthYearFormat = new SimpleDateFormat("MM-yyyy");
+
         Calendar calendar = Calendar.getInstance();
-        month = dateFormat.format(calendar.getTime()).split("/")[0];
-        year = dateFormat.format(calendar.getTime()).split("/")[1];
+        month = monthYearFormat.format(calendar.getTime()).split("-")[0];
+        year = monthYearFormat.format(calendar.getTime()).split("-")[1];
 
         final List<Expense> expenses = database.getExpensesForMonth(month, year);
 
@@ -84,6 +88,8 @@ public class HomeDefault extends Fragment {
 
         expenseAdapter = new ExpenseAdapter(getContext(), expenses);
         expensesRecycler.setAdapter(expenseAdapter);
+
+        constructGraph();
 
         buttonIncome.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,37 +107,53 @@ public class HomeDefault extends Fragment {
             }
         });
 
-        int lastDate = Integer.parseInt(expenses.get(0).getDate().split("/")[0]);
-        int firstDate = Integer.parseInt(expenses.get(expenses.size() - 1).getDate().split("/")[0]);
-        ArrayList<Entry> yValues = new ArrayList<>();
-
-        for (int i = firstDate; i<=lastDate; i++) {
-            yValues.add(new Entry(i*1.5f, i));
-        }
-
-        LineDataSet set1 = new LineDataSet(yValues, "DataSet 1");
-        set1.setFillAlpha(110);
-        set1.setColor(Color.BLACK);
-        set1.setCircleColor(Color.BLACK);
-        set1.setLineWidth(1f);
-        set1.setCircleRadius(3f);
-        set1.setDrawCircleHole(false);
-        set1.setValueTextSize(9f);
-        set1.setDrawFilled(true);
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
-
-        LineData data = new LineData(dataSets);
-
-        dailyExpenses.setData(data);
-
-        LimitLine limitLine = new LimitLine(10f, "Income");
-        YAxis leftAxis = dailyExpenses.getAxisLeft();
-        leftAxis.removeAllLimitLines();
-        leftAxis.addLimitLine(limitLine);
-
         return view;
+    }
+
+    private void constructGraph() {
+        int firstDate, lastDate;
+
+        ArrayList<Entry> data = new ArrayList<>();
+        JSONObject graphData = database.getGraphData(month, year);
+        YAxis leftAxis = dailyExpenses.getAxisLeft();
+        YAxis rightAxis = dailyExpenses.getAxisRight();
+
+        XAxis xAxis = dailyExpenses.getXAxis();
+        xAxis.setDrawGridLines(false);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        try {
+            lastDate = Integer.parseInt(graphData.getString("lastDate").split("-")[0]);
+            firstDate = Integer.parseInt(graphData.getString("firstDate").split("-")[0]);
+
+            rightAxis.setAxisMaximum(graphData.getInt("totalIncome") + 50);
+            rightAxis.setDrawGridLines(false);
+            rightAxis.setEnabled(false);
+            leftAxis.setDrawGridLines(false);
+
+            dailyExpenses.getLegend().setEnabled(false);
+            dailyExpenses.setDrawBorders(false);
+            dailyExpenses.getDescription().setEnabled(false);
+            dailyExpenses.setTouchEnabled(false);
+            dailyExpenses.getXAxis().setTextSize(14);
+            dailyExpenses.getAxisLeft().setTextSize(14);
+
+            if(lastDate != 0 && firstDate != 0){
+                Log.e("Here", "Here");
+                for (int i = firstDate; i<=lastDate; i++) {
+                    data.add(new Entry(i, database.getExpensesForDate(i, month, year)));
+                }
+                LineDataSet lineDataSet = new LineDataSet(data, "");
+                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+                dataSets.add(lineDataSet);
+
+                LineData lineData = new LineData(dataSets);
+                lineData.setValueTextSize(14);
+                dailyExpenses.setData(lineData);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void showExpenseAlert() {
@@ -165,9 +187,9 @@ public class HomeDefault extends Fragment {
             @Override
             public void onClick(View v) {
                 boolean check = true;
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat monthYearFormat = new SimpleDateFormat("dd-MM-yyyy");
                 Calendar calendar = Calendar.getInstance();
-                String date = dateFormat.format(calendar.getTime());
+                String date = monthYearFormat.format(calendar.getTime());
                 String desc = descEntered.getText().toString().trim();
                 String type = typeEntered.getSelectedItem().toString();
                 int amount = 0;
@@ -209,6 +231,7 @@ public class HomeDefault extends Fragment {
             public void onDismiss(DialogInterface dialog) {
                 expenseAdapter = new ExpenseAdapter(getContext(), database.getExpensesForMonth(month, year));
                 expensesRecycler.setAdapter(expenseAdapter);
+                constructGraph();
             }
         });
     }
@@ -230,9 +253,9 @@ public class HomeDefault extends Fragment {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat monthYearFormat = new SimpleDateFormat("dd-MM-yyyy");
                 Calendar calendar = Calendar.getInstance();
-                String date = dateFormat.format(calendar.getTime());
+                String date = monthYearFormat.format(calendar.getTime());
                 int amount = 0;
                 try {
                     amount = Integer.parseInt(amountEntered.getText().toString().trim());
@@ -253,6 +276,13 @@ public class HomeDefault extends Fragment {
             @Override
             public void onClick(View v) {
                 incomeDialog.dismiss();
+            }
+        });
+
+        incomeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                dailyExpenses.notifyDataSetChanged();
             }
         });
     }

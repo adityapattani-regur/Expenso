@@ -5,7 +5,6 @@ class Expense {
     private String type;
     private int amount;
     private String date;
-    private String image;
 
     Expense (String description, String type, String date, int amount) {
         this.description = description;
@@ -30,27 +29,19 @@ class Expense {
         return date;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setDescription(String description) {
+    void setDescription(String description) {
         this.description = description;
     }
 
-    public void setType(String type) {
+    void setType(String type) {
         this.type = type;
     }
 
-    public void setAmount(int amount) {
+    void setAmount(int amount) {
         this.amount = amount;
     }
 
-    public void setDate(String date) {
+    void setDate(String date) {
         this.date = date;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 }

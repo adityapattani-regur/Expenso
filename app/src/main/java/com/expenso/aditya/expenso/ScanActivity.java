@@ -35,6 +35,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
         }).check();
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("Scan");
 
         scannerView = new ZXingScannerView(this);
         setContentView(scannerView);
