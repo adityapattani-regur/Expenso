@@ -3,13 +3,13 @@ package com.expenso.aditya.expenso;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +23,13 @@ import android.widget.TextView;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import org.json.JSONException;
@@ -36,6 +38,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class HomeDefault extends Fragment {
@@ -138,17 +141,29 @@ public class HomeDefault extends Fragment {
             dailyExpenses.getXAxis().setTextSize(14);
             dailyExpenses.getAxisLeft().setTextSize(14);
 
+            @SuppressLint("UseSparseArrays") final HashMap<Integer, Integer> xAxisValues = new HashMap<>();
+
             if(lastDate != 0 && firstDate != 0){
-                Log.e("Here", "Here");
                 for (int i = firstDate; i<=lastDate; i++) {
                     data.add(new Entry(i, database.getExpensesForDate(i, month, year)));
+                    xAxisValues.put(i, i);
                 }
                 LineDataSet lineDataSet = new LineDataSet(data, "");
+                lineDataSet.setCircleColor(Color.parseColor("#FF7043"));
+                lineDataSet.setCircleHoleRadius(2.0f);
+                lineDataSet.setLineWidth(2.0f);
+                lineDataSet.setColor(Color.parseColor("#FF7043"));
                 ArrayList<ILineDataSet> dataSets = new ArrayList<>();
                 dataSets.add(lineDataSet);
 
                 LineData lineData = new LineData(dataSets);
                 lineData.setValueTextSize(14);
+                dailyExpenses.getXAxis().setValueFormatter(new IAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value, AxisBase axis) {
+                        return String.valueOf(xAxisValues.get(((int)value)));
+                    }
+                });
                 dailyExpenses.setData(lineData);
             }
         } catch (JSONException e) {
@@ -231,6 +246,8 @@ public class HomeDefault extends Fragment {
             public void onDismiss(DialogInterface dialog) {
                 expenseAdapter = new ExpenseAdapter(getContext(), database.getExpensesForMonth(month, year));
                 expensesRecycler.setAdapter(expenseAdapter);
+                emptyView.setVisibility(View.INVISIBLE);
+                expensesRecycler.setVisibility(View.VISIBLE);
                 constructGraph();
             }
         });

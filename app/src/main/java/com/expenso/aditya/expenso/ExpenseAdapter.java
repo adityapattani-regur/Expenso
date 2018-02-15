@@ -71,8 +71,6 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
                 holder.expenseType.setTextColor(Color.parseColor("#EAEAD7"));
                 break;
         }
-
-
     }
 
     @Override

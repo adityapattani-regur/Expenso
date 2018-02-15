@@ -4,6 +4,7 @@
     package="com.expenso.aditya.expenso">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
 
     <application
         android:allowBackup="false"

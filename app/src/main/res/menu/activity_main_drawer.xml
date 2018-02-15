@@ -13,6 +13,7 @@
         <item
             android:icon="@drawable/ic_scan"
             android:id="@+id/nav_scan"
+            android:checkable="false"
             android:title="@string/scan" />
         <item
             android:icon="@drawable/ic_predict"

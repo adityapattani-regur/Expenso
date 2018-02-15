@@ -21,6 +21,7 @@ public class Database extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "Expenses.db";
     private static final String TABLE_EXPENSES = "Expenses";
     private static final String TABLE_INCOMES = "Incomes";
+    private static final String TABLE_SCANS = "Scans";
     private static final int DATABASE_VERSION = 1;
 
     Database(Context context) {
@@ -41,13 +42,21 @@ public class Database extends SQLiteOpenHelper{
                 "amount INT(6) NOT NULL, " +
                 "date DATE NOT NULL);";
 
+        String CREATE_SCANS = "CREATE TABLE " + TABLE_SCANS +
+                "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "resultText VARCHAR(20) NOT NULL, " +
+                "resultFormat VARCHAR(20) NOT NULL, " +
+                "resultTimestamp VARCHAR(20) NOT NULL, " +
+                "date DATE NOT NULL);";
+
         sqLiteDatabase.execSQL(CREATE_EXPENSES);
         sqLiteDatabase.execSQL(CREATE_INCOMES);
+        sqLiteDatabase.execSQL(CREATE_SCANS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        String DROP_TABLES = "DROP TABLE " + TABLE_EXPENSES + ", " + TABLE_INCOMES + ";";
+        String DROP_TABLES = "DROP TABLE " + TABLE_EXPENSES + ", " + TABLE_INCOMES + ", " + TABLE_SCANS + ";";
         sqLiteDatabase.execSQL(DROP_TABLES);
         onCreate(sqLiteDatabase);
     }
@@ -155,5 +164,36 @@ public class Database extends SQLiteOpenHelper{
         result = cursor.getFloat(0);
         cursor.close();
         return result;
+    }
+
+    void addScanResults(String text, String type, String timestamp) {
+        Calendar calendar = Calendar.getInstance();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String date = dateFormat.format(calendar.getTime());
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("resultText", text);
+        contentValues.put("resultFormat", type);
+        contentValues.put("resultTimestamp", timestamp);
+        contentValues.put("date", date);
+
+        db.insert(TABLE_SCANS, null, contentValues);
+    }
+
+    List<History> getScanResults() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<History> historyList = new ArrayList<>();
+        String SELECT_SCAN_RES = "SELECT * FROM " + TABLE_SCANS + " ORDER BY id DESC;";
+
+        Cursor selectCursor = db.rawQuery(SELECT_SCAN_RES, null);
+        if(selectCursor.moveToFirst()) {
+            do {
+                historyList.add(new History(selectCursor.getString(1), selectCursor.getString(2), selectCursor.getString(3)));
+            } while (selectCursor.moveToNext());
+        }
+
+        selectCursor.close();
+        return historyList;
     }
 }
