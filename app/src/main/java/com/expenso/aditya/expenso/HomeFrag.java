@@ -29,12 +29,27 @@ public class HomeFrag extends Fragment {
         categoryExpenses = view.findViewById(R.id.bar_chart);
         database = new Database(getContext());
 
+        categoryExpenses.getXAxis().setEnabled(false);
+        categoryExpenses.getAxisRight().setEnabled(false);
+        categoryExpenses.setTouchEnabled(false);
+        categoryExpenses.getLegend().setTextSize(14);
+        categoryExpenses.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        categoryExpenses.getAxisLeft().setDrawGridLines(false);
+        categoryExpenses.getAxisLeft().setEnabled(false);
+        categoryExpenses.getDescription().setEnabled(false);
+        categoryExpenses.setDrawValueAboveBar(false);
+
+        constructBar();
+        return view;
+    }
+
+    private void constructBar() {
         ArrayList<BarEntry> dataFood = new ArrayList<>();
         dataFood.add(new BarEntry(1, database.getExpenseForCategory("Food")));
         ArrayList<BarEntry> dataTransport = new ArrayList<>();
-        dataTransport.add(new BarEntry(2, database.getExpenseForCategory("Shopping")));
+        dataTransport.add(new BarEntry(2, database.getExpenseForCategory("Transport")));
         ArrayList<BarEntry> dataShopping = new ArrayList<>();
-        dataShopping.add(new BarEntry(3, database.getExpenseForCategory("Transport")));
+        dataShopping.add(new BarEntry(3, database.getExpenseForCategory("Shopping")));
         ArrayList<BarEntry> dataDebt = new ArrayList<>();
         dataDebt.add(new BarEntry(4, database.getExpenseForCategory("Debt")));
 
@@ -61,18 +76,5 @@ public class HomeFrag extends Fragment {
         barData.setValueTextSize(16);
         categoryExpenses.setData(barData);
         categoryExpenses.invalidate();
-
-        categoryExpenses.getXAxis().setEnabled(false);
-        categoryExpenses.getAxisRight().setEnabled(false);
-        categoryExpenses.setTouchEnabled(false);
-        categoryExpenses.getLegend().setTextSize(14);
-        categoryExpenses.getLegend().setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
-        categoryExpenses.getAxisLeft().setDrawGridLines(false);
-        categoryExpenses.getAxisLeft().setEnabled(false);
-        categoryExpenses.getDescription().setEnabled(false);
-        categoryExpenses.setDrawValueAboveBar(false);
-        return view;
     }
-
-
 }

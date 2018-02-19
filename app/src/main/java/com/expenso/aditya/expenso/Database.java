@@ -196,4 +196,11 @@ public class Database extends SQLiteOpenHelper{
         selectCursor.close();
         return historyList;
     }
+
+    void deleteExpense(Expense expense) {
+        SQLiteDatabase db = getWritableDatabase();
+        String DELETE_QUERY = "DELETE FROM " + TABLE_EXPENSES + " WHERE amount = " + expense.getAmount() + " AND description = '" + expense.getDescription() + "' AND date = '" + expense.getDate() + "' AND type = '" + expense.getType() + "';";
+
+        db.execSQL(DELETE_QUERY);
+    }
 }
