@@ -22,4 +22,8 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <style name="differentAccent" parent="Theme.Design.NoActionBar">
+        <item name="android:colorAccent">#FFFFFF</item>
+    </style>
+
 </resources>

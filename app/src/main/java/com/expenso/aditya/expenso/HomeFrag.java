@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.BarData;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 public class HomeFrag extends Fragment {
     BarChart categoryExpenses;
     Database database;
+
+    public HomeFrag() {}
 
     @Nullable
     @Override
@@ -41,6 +44,14 @@ public class HomeFrag extends Fragment {
 
         constructBar();
         return view;
+    }
+
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible) {
+            constructBar();
+        }
     }
 
     private void constructBar() {
@@ -75,6 +86,7 @@ public class HomeFrag extends Fragment {
         BarData barData = new BarData(dataSets);
         barData.setValueTextSize(16);
         categoryExpenses.setData(barData);
+        categoryExpenses.animateY(1000, Easing.EasingOption.EaseInOutSine);
         categoryExpenses.invalidate();
     }
 }

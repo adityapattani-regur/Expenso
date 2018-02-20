@@ -51,6 +51,8 @@ public class HomeDefault extends Fragment implements ExpenseAdapter.ExpenseAdapt
     Database database;
     String month, year;
 
+    public HomeDefault() {}
+
     @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
@@ -100,6 +102,9 @@ public class HomeDefault extends Fragment implements ExpenseAdapter.ExpenseAdapt
         dailyExpenses.getXAxis().setDrawGridLines(false);
         dailyExpenses.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         dailyExpenses.getXAxis().setGranularity(1.0f);
+        dailyExpenses.getAxisLeft().setGranularity(10.0f);
+        dailyExpenses.getAxisLeft().setAxisLineWidth(2.0f);
+        dailyExpenses.getXAxis().setAxisLineWidth(2.0f);
         dailyExpenses.getAxisRight().setDrawGridLines(false);
         dailyExpenses.getAxisRight().setEnabled(false);
         dailyExpenses.getAxisLeft().setDrawGridLines(false);

@@ -18,4 +18,8 @@
     <string name="add">Add</string>
     <string name="image_history">Image History</string>
     <string name="vertical_ellipsis">&#8942;</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="welcome_msg">Welcome\nto\nExpenso</string>
+    <string name="proceed">Proceed</string>
 </resources>
