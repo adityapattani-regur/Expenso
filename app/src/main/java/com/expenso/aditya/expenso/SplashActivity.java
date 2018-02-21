@@ -67,9 +67,6 @@ public class SplashActivity extends AppCompatActivity {
         proceedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("FirstUse", false);
-                editor.apply();
                 Intent intent = new Intent(SplashActivity.this, MainActivity.class);
                 finish();
                 startActivity(intent);

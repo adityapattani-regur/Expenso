@@ -2,7 +2,9 @@ package com.expenso.aditya.expenso;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +42,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt;
+
 public class HomeDefault extends Fragment implements ExpenseAdapter.ExpenseAdapterListener {
     RecyclerView expensesRecycler;
     LineChart dailyExpenses;
@@ -65,6 +69,23 @@ public class HomeDefault extends Fragment implements ExpenseAdapter.ExpenseAdapt
         buttonExpense = view.findViewById(R.id.add_expense);
         buttonIncome = view.findViewById(R.id.add_income);
 
+        final SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppData", Context.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean("FirstUse", true)) {
+            new MaterialTapTargetPrompt.Builder(getActivity())
+                    .setTarget(view.findViewById(R.id.focus_btn)).setPrimaryText("Add your first entry").setSecondaryText("Add an income/expense")
+                    .setBackButtonDismissEnabled(true)
+                    .setPromptStateChangeListener(new MaterialTapTargetPrompt.PromptStateChangeListener() {
+                        @Override
+                        public void onPromptStateChanged(@NonNull MaterialTapTargetPrompt prompt, int state) {
+                            if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("FirstUse", false);
+                                editor.apply();
+                            }
+                        }
+                    }).show();
+        }
+
         database = new Database(getContext());
 
         menu = view.findViewById(R.id.fab_menu);
@@ -84,9 +105,12 @@ public class HomeDefault extends Fragment implements ExpenseAdapter.ExpenseAdapt
 
         if (expenses.size() == 0) {
             emptyView.setVisibility(View.VISIBLE);
+            dailyExpenses.setVisibility(View.INVISIBLE);
             expensesRecycler.setVisibility(View.INVISIBLE);
         } else {
             emptyView.setVisibility(View.INVISIBLE);
+            dailyExpenses.setVisibility(View.VISIBLE);
+            constructGraph();
             expensesRecycler.setVisibility(View.VISIBLE);
         }
 

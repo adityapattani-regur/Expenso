@@ -30,6 +30,7 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     implementation 'com.github.bumptech.glide:glide:4.6.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:2.7.0'
     compile 'com.github.clans:fab:1.6.4'
     compile 'com.journeyapps:zxing-android-embedded:3.5.0'
     compile 'com.google.android.gms:play-services-vision:11.8.0'
